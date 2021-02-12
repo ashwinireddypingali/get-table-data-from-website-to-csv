@@ -1,0 +1,35 @@
+* Import tables from website to excel file.
+
+import numpy as np
+import pandas as pd
+
+from urllib.request import urlopen
+from bs4 import BeautifulSoup
+
+def getHTMLContent(link):
+    html = urlopen(link)
+    soup = BeautifulSoup(html, 'html.parser')
+    return soup
+
+#f = open("C:\\Users\\PingaliA\\OneDrive - HP Inc\\Desktop\\output\\scrap_wiki.csv",'w',newline='')
+#writer = csv.writer(f)
+
+content = getHTMLContent('https://en.wikipedia.org/wiki/List_of_countries_and_dependencies_by_population')
+tables = content.find_all('table')
+
+    
+table =content.find('table', {'class': 'wikitable sortable plainrowheaders'})
+rows = table.find_all('tr')
+lt = []
+for row in rows:
+    cols = row.findChildren(recursive=False)
+    cols = [ele.text.strip() for ele in cols]
+    lt.append(cols)
+    #writer.writerows(cols)
+   # print(lt)
+
+df = pd.DataFrame(lt)
+
+df.to_csv("path")
+
+--------------------------------------------------------------------------------------------------------
